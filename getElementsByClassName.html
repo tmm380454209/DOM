@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>getElementsByClassName</title>
+</head>
+<body>
+	<div class="w1 w2 w3"></div>
+	<div class="w2 w3"></div>
+	<div class="w1 w2"></div>
+	<div class="w1 w3"></div>
+	<div class="w3"></div>
+
+	<script>
+		/*//IE 6-8不兼容
+		console.log(document.getElementsByClassName("w1"));//写一个样式类名，只要包含这个样式类名就可以
+		console.log(document.getElementsByClassName("w3      w1"));//必须同时包含w1&& w3的才可以，但是和样式的顺序和中间有多少个空格没有关系
+
+		console.log(document.getElementsByClassName("w4"));//空集合
+*/
+		//通过元素的样式类名来获取一组元素集合
+		//className:可能一个也可能多个
+		//context:获取元素的上下文->如果这个值不传递的话，，默认document
+		function getElementsByClass(className,context){
+			context = context || document;
+			/*if(typeof context ==="undefined"){
+				context = document;
+			}*/
+
+			//1.把传递进来的className去除字符串的首尾空格，然后按照中间的空格把它里面的每一项拆分成数组
+			var aryClassName = className.replace(/(^ +| +$)/g,"").split(/ +/g);
+			var ary = [];
+			//2.获取指定上下文的所有的元素标签，循环这些标签，获取每一个标签的className样式类名字符串
+			var nodeList = context.getElementsByTagName("*");
+			//获取指定上下文中的所有的元素标签
+			for (var i = 0; i < nodeList.length; i++) {
+				var curNode = nodeList[i];
+				//判断curNode.className里面是否包含ary里面的每一项className
+				var isOk = true;//我们假设curNode中包含了所有样式；
+				for (var k = 0; k < aryClassName.length; k++) {
+					var curName = aryClassName[k];
+					var reg = new RegExp("(^| +)"+ curName +"( +|$)");
+					if(!reg.test(curNode.className)){
+						isOk = false;
+						break;
+					}
+				}
+				if(isOk){//拿每一个标签分别和所有样式类名比较后，如果结果还是true的话，说明当前元素标签包含了所有的样式，也是我们想要的
+					ary.push(curNode);
+
+				}
+			}
+				
+			return ary;
+		}
+		console.log(getElementsByClass("w1"));
+	</script>
+</body>
+</html>
